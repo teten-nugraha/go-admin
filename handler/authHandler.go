@@ -6,7 +6,6 @@ import (
 	"github.com/teten-nugraha/go-admin/db"
 	"github.com/teten-nugraha/go-admin/model"
 	"github.com/teten-nugraha/go-admin/util"
-	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
 )
@@ -26,14 +25,13 @@ func Register(ctx *fiber.Ctx) error {
 		})
 	}
 
-	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
-
 	user := model.User{
 		FirstName: data["first_name"],
 		LastName:  data["last_name"],
 		Email:     data["email"],
-		Password:  string(encryptedPassword),
 	}
+
+	user.SetPassword(data["password"])
 
 	db.DB.Create(&user)
 
@@ -58,7 +56,7 @@ func Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(data["password"])); err != nil {
+	if err := user.ComparePassword(data["password"]); err != nil {
 		ctx.Status(404)
 		return ctx.JSON(fiber.Map{
 			"message": "incorrect password",
