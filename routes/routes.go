@@ -14,4 +14,7 @@ func SetupRoutes(app *fiber.App) {
 
 	app.Post("/api/logout", handler.Logout)
 	app.Get("/api/user", handler.User)
+
+	app.Get("/api/users", handler.AllUsers)
+	app.Post("/api/users", handler.CreateUser)
 }
