@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/teten-nugraha/go-admin/db"
 	"github.com/teten-nugraha/go-admin/model"
+	"github.com/teten-nugraha/go-admin/util"
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
@@ -64,12 +65,7 @@ func Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer:    strconv.Itoa(int(user.Id)),
-		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // 1 day
-	})
-
-	token, err := claims.SignedString([]byte("secret"))
+	token, err := util.GenerateJwt(strconv.Itoa(int(user.Id)))
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}
@@ -95,20 +91,10 @@ type Claims struct {
 func User(ctx *fiber.Ctx) error {
 	cookie := ctx.Cookies("jwt")
 
-	token, err := jwt.ParseWithClaims(cookie, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
-	})
-	if err != nil || !token.Valid {
-		ctx.Status(fiber.StatusUnauthorized)
-		return ctx.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
-	claims := token.Claims.(*Claims)
+	id, _ := util.ParseJwt(cookie)
 
 	var user model.User
-	db.DB.Where("id = ?", claims.Issuer).First(&user)
+	db.DB.Where("id = ?", id).First(&user)
 
 	return ctx.JSON(user)
 }
