@@ -11,7 +11,7 @@ func AllUsers(c *fiber.Ctx) error {
 
 	var users []model.User
 
-	db.DB.Find(&users)
+	db.DB.Preload("Role").Find(&users)
 
 	return c.JSON(&users)
 }
