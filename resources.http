@@ -1,0 +1,20 @@
+
+POST localhost:3000/register
+Content-Type: application/json
+
+{
+  "first_name": "Teten",
+  "last_name": "Nugraha",
+  "email": "teten@mail.com",
+  "password": "123",
+  "password_confirm": "123"
+}
+
+###
+
+
+GET localhost:3000
+Accept: application/json
+
+###
+

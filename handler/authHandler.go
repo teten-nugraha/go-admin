@@ -2,18 +2,36 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/teten-nugraha/go-admin/db"
 	"github.com/teten-nugraha/go-admin/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(c *fiber.Ctx) error {
+func Register(ctx *fiber.Ctx) error {
 
-	user := model.User{
-		FirstName: "Teten",
+	var data map[string]string
+
+	if err := ctx.BodyParser(&data); err != nil {
+		return err
 	}
 
-	user.LastName = "NUgraha"
-	user.Email = "teten.nugraha18@gmail.com"
-	user.Password = "Secret"
+	if data["password"] != data["password_confirm"] {
+		ctx.Status(400)
+		return ctx.JSON(fiber.Map{
+			"message": "password doesnt match",
+		})
+	}
 
-	return c.JSON(user)
+	encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
+
+	user := model.User{
+		FirstName: data["first_name"],
+		LastName:  data["last_name"],
+		Email:     data["email"],
+		Password:  string(encryptedPassword),
+	}
+
+	db.DB.Create(&user)
+
+	return ctx.JSON(user)
 }
