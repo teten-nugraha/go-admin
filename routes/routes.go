@@ -15,6 +15,9 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/api/logout", handler.Logout)
 	app.Get("/api/user", handler.User)
 
+	app.Get("/api/users/info", handler.UpdateInfo)
+	app.Get("/api/users/password", handler.UpdatePassword)
+
 	app.Get("/api/users", handler.AllUsers)
 	app.Post("/api/users", handler.CreateUser)
 	app.Put("/api/users/:id", handler.UpdateUser)
