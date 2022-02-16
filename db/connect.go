@@ -20,5 +20,5 @@ func Connect() {
 	DB = db
 
 	// migrations from model/*
-	db.AutoMigrate(&model.User{}, &model.Role{}, &model.Permission{}, &model.Product{})
+	db.AutoMigrate(&model.User{}, &model.Role{}, &model.Permission{}, &model.Product{}, &model.Order{}, &model.OrderItem{})
 }
