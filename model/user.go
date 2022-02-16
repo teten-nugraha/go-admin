@@ -1,6 +1,9 @@
 package model
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
 
 type User struct {
 	Id        uint   `json:"id"`
@@ -19,4 +22,19 @@ func (user *User) SetPassword(password string) {
 
 func (user *User) ComparePassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+}
+
+func (product *User) Count(db *gorm.DB) int64 {
+	var total int64
+	db.Model(&User{}).Count(&total)
+
+	return total
+}
+
+func (product *User) Take(db *gorm.DB, limit int, offset int) interface{} {
+	var users []User
+
+	db.Offset(offset).Limit(limit).Find(&users)
+
+	return users
 }
