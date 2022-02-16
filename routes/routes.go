@@ -37,4 +37,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Put("/api/products/:id", handler.UpdateProduct)
 	app.Get("/api/products/:id", handler.GetProduct)
 	app.Delete("/api/products/:id", handler.DeleteProduct)
+
+	app.Post("/api/upload", handler.Upload)
+	app.Static("/api/uploads", "./uploads")
 }
