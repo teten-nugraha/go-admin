@@ -3,11 +3,16 @@ package handler
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/teten-nugraha/go-admin/db"
+	"github.com/teten-nugraha/go-admin/middleware"
 	"github.com/teten-nugraha/go-admin/model"
 	"strconv"
 )
 
 func AllUsers(c *fiber.Ctx) error {
+
+	if err := middleware.IsAuthorized(c, "users"); err != nil {
+		return err
+	}
 
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 
